@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello Voice Box!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
-  </body>
+<head>
+  <title>Audio Recorder</title>
+</head>
+<body>
+  <button id="start">Start Recording</button>
+  <button id="stop">Stop Recording</button>
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    document.getElementById('start').addEventListener('click', () => {
+      ipcRenderer.send('start-recording');
+    });
+
+    document.getElementById('stop').addEventListener('click', () => {
+      ipcRenderer.send('stop-recording');
+    });
+
+    ipcRenderer.on('recording-started', () => {
+      alert('Recording started.');
+    });
+  </script>
+</body>
 </html>

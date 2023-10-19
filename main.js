@@ -1,6 +1,9 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain  } = require('electron')
 const path = require('node:path')
+
+const record = require('node-record-lpcm16');
+const fs = require('fs');
 
 const createWindow = () => {
   // Create the browser window.
@@ -41,6 +44,21 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
+
+ipcMain.on('start-recording', (event) => {
+  const audioStream = record.start({
+    sampleRate: 16000,
+    threshold: 0,
+  });
+
+  audioStream.pipe(fs.createWriteStream('output.wav'));
+
+  event.reply('recording-started');
+});
+
+ipcMain.on('stop-recording', () => {
+  record.stop();
+});
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
